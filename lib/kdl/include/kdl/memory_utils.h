@@ -71,6 +71,21 @@ namespace kdl {
         assert(!mem_expired(ptr));
         return ptr.lock();
     }
+
+    /**
+     * Returns a unique pointer of type O that manages the object managed by the given pointer.
+     * 
+     * Type I* must be convertible to O* via a static cast.
+     * 
+     * @tparam O the type of the object managed by the returned pointer
+     * @tparam I the type of the object managed by the given pointer
+     * @param i the pointer to cast
+     * @return a unique pointer managing the object managed by i, but cast to type O
+     */
+    template <typename O, typename I>
+    std::unique_ptr<O> unique_ptr_cast(std::unique_ptr<I>&& i) {
+        return std::unique_ptr<O>(static_cast<O*>(i.release()));
+    }
 }
 
 #endif //KDL_MEMORY_UTILS_H
