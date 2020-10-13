@@ -164,7 +164,7 @@ namespace TrenchBroom {
         m_selectionBoundsValid(true),
         m_viewEffectsService(nullptr),
         m_repeatStack(std::make_unique<RepeatStack>()) {
-                bindObservers();
+            bindObservers();
         }
 
         MapDocument::~MapDocument() {
