@@ -431,6 +431,7 @@ set(COMMON_SOURCE
         ${COMMON_SOURCE_DIR}/View/SnapshotCommand.cpp
         ${COMMON_SOURCE_DIR}/View/SpinControl.cpp
         ${COMMON_SOURCE_DIR}/View/Splitter.cpp
+        ${COMMON_SOURCE_DIR}/View/SwapNodeContentsCommand.cpp
         ${COMMON_SOURCE_DIR}/View/SwitchableMapViewContainer.cpp
         ${COMMON_SOURCE_DIR}/View/TabBar.cpp
         ${COMMON_SOURCE_DIR}/View/TabBook.cpp
@@ -954,6 +955,7 @@ set(COMMON_HEADER
         ${COMMON_SOURCE_DIR}/View/SnapshotCommand.h
         ${COMMON_SOURCE_DIR}/View/SpinControl.h
         ${COMMON_SOURCE_DIR}/View/Splitter.h
+        ${COMMON_SOURCE_DIR}/View/SwapNodeContentsCommand.h
         ${COMMON_SOURCE_DIR}/View/SwitchableMapViewContainer.h
         ${COMMON_SOURCE_DIR}/View/TabBar.h
         ${COMMON_SOURCE_DIR}/View/TabBook.h

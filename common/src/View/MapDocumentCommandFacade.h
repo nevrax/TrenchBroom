@@ -73,6 +73,8 @@ namespace TrenchBroom {
         public: // adding and removing nodes
             void performAddNodes(const std::map<Model::Node*, std::vector<Model::Node*>>& nodes);
             void performRemoveNodes(const std::map<Model::Node*, std::vector<Model::Node*>>& nodes);
+        public: // swapping node contents
+            void performSwapNodeContents(std::vector<std::tuple<Model::Node*, std::unique_ptr<Model::Node>>>& nodesToSwap);
         public: // Node Visibility
             std::map<Model::Node*, Model::VisibilityState> setVisibilityState(const std::vector<Model::Node*>& nodes, Model::VisibilityState visibilityState);
             std::map<Model::Node*, Model::VisibilityState> setVisibilityEnsured(const std::vector<Model::Node*>& nodes);
