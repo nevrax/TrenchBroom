@@ -79,6 +79,10 @@ namespace TrenchBroom {
             return doTakeSnapshot();
         }
 
+        void Node::swapContents(Node& other) {
+            doSwapContents(other);
+        }
+
         void Node::cloneAttributes(Node* node) const {
             node->setVisibilityState(m_visibilityState);
             node->setLockState(m_lockState);

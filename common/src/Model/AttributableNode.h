@@ -172,6 +172,7 @@ namespace TrenchBroom {
             AttributableNode();
         private: // implemenation of node interface
             const std::string& doGetName() const override;
+            void doSwapContents(Node& other) override;
             virtual void doAncestorWillChange() override;
             virtual void doAncestorDidChange() override;
         private: // subclassing interface

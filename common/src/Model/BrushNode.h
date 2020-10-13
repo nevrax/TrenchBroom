@@ -94,6 +94,7 @@ namespace TrenchBroom {
 
             Node* doClone(const vm::bbox3& worldBounds) const override;
             NodeSnapshot* doTakeSnapshot() override;
+            void doSwapContents(Node& other) override;
 
             bool doCanAddChild(const Node* child) const override;
             bool doCanRemoveChild(const Node* child) const override;

@@ -89,6 +89,18 @@ namespace TrenchBroom {
             Node* clone(const vm::bbox3& worldBounds) const;
             Node* cloneRecursively(const vm::bbox3& worldBounds) const;
             NodeSnapshot* takeSnapshot();
+        public: // swap node contents
+            /**
+             * Swaps the contents of this node with the contents of the given node.
+             *
+             * The definition of what the contents of a node is depends on the Node subclass, therefore subclasses
+             * must implement Node::doSwapContents. When this function finishes, this node has taken on the contents
+             * of the given node, and the given node has taken on the contents of this node.
+             *
+             * If the contents of the given node cannot be swapped with this node's contents, nothing happens. This
+             * could be the case if the given node is a different Node subtype than this node.
+             */
+            void swapContents(Node& other);
         protected:
             void cloneAttributes(Node* node) const;
 
@@ -422,6 +434,7 @@ namespace TrenchBroom {
             virtual Node* doClone(const vm::bbox3& worldBounds) const = 0;
             virtual Node* doCloneRecursively(const vm::bbox3& worldBounds) const;
             virtual NodeSnapshot* doTakeSnapshot();
+            virtual void doSwapContents(Node& other) = 0;
 
             virtual bool doCanAddChild(const Node* child) const = 0;
             virtual bool doCanRemoveChild(const Node* child) const = 0;

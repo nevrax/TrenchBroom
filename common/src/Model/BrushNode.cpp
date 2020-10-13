@@ -165,6 +165,13 @@ namespace TrenchBroom {
             return result;
         }
 
+        void BrushNode::doSwapContents(Node& other) {
+            if (auto* otherBrush = dynamic_cast<BrushNode*>(&other)) {
+                auto myOldBrush = setBrush(otherBrush->brush());
+                otherBrush->setBrush(myOldBrush);
+            }
+        }
+
         bool BrushNode::doCanAddChild(const Node* /* child */) const {
             return false;
         }

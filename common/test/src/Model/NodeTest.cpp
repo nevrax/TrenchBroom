@@ -104,6 +104,8 @@ namespace TrenchBroom {
                 return name;
             }
 
+            void doSwapContents(Node&) override {}
+
             const vm::bbox3& doGetLogicalBounds() const override {
                 static const vm::bbox3 bounds;
                 return bounds;
@@ -177,6 +179,8 @@ namespace TrenchBroom {
             Node* doClone(const vm::bbox3& /* worldBounds */) const override {
                 return new TestNode();
             }
+
+            void doSwapContents(Node&) override {}
 
             const std::string& doGetName() const override {
                 static const std::string name("some name");
