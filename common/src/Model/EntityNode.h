@@ -83,6 +83,13 @@ namespace TrenchBroom {
             const vm::bbox3& modelBounds() const;
             const Assets::EntityModelFrame* modelFrame() const;
             void setModelFrame(const Assets::EntityModelFrame* modelFrame);
+        public: // transformation
+            /**
+             * Transforms this entity by the given transformation.
+             *
+             * @param transformation the transformation to apply
+             */
+            void transform(const vm::mat4x4& transformationes);
         private: // implement Node interface
             const vm::bbox3& doGetLogicalBounds() const override;
             const vm::bbox3& doGetPhysicalBounds() const override;
@@ -123,7 +130,6 @@ namespace TrenchBroom {
             LayerNode* doGetLayer() override;
             GroupNode* doGetGroup() override;
 
-            kdl::result<void, TransformError> doTransform(const vm::bbox3& worldBounds, const vm::mat4x4& transformation, bool lockTextures) override;
             bool doContains(const Node* node) const override;
             bool doIntersects(const Node* node) const override;
         private:

@@ -409,40 +409,45 @@ namespace TrenchBroom {
             for (auto nodeIt = std::begin(nodes); nodeIt != std::end(nodes) && success; ++nodeIt) {
                 success = (*nodeIt)->accept(kdl::overload(
                     [](Model::WorldNode*) {
-                        return kdl::result<void, Model::TransformError>::success();
+                        return true;
                     },
                     [](Model::LayerNode*) {
-                        return kdl::result<void, Model::TransformError>::success();
+                        return true;
                     },
                     [&](auto&& thisLambda, Model::GroupNode* group) {
                         for (auto* child : group->children()) {
-                            auto result = child->accept(thisLambda);
-                            if (!result.is_success()) {
-                                return result;
+                            if (!child->accept(thisLambda)) {
+                                return false;
                             }
                         }
-                        return kdl::result<void, Model::TransformError>::success();
+                        return true;
                     },
                     [&](auto&& thisLambda, Model::EntityNode* entity) {
                         if (entity->hasChildren()) {
                             for (auto* child : entity->children()) {
-                                auto result = child->accept(thisLambda);
-                                if (!result.is_success()) {
-                                    return result;
+                                if (!child->accept(thisLambda)) {
+                                    return false;
                                 }
                             }
-                            return kdl::result<void, Model::TransformError>::success();
                         } else {
-                            return entity->transform(m_worldBounds, transform, lockTextures);
+                            entity->transform(transform);
                         }
+                        return true;
                     },
                     [&](Model::BrushNode* brush) {
-                        return brush->transform(m_worldBounds, transform, lockTextures);
+                        return brush->brush().transform(m_worldBounds, transform, lockTextures)
+                            .visit(kdl::overload(
+                                [&](Model::Brush&& b) {
+                                    brush->setBrush(std::move(b));
+                                    return true;
+                                },
+                                [&](const Model::BrushError e) {
+                                    error() << "Could not transform objects: " << e;
+                                    return false;
+                                }
+                            ));                 
                     }
-                )).handle_errors(
-                    [&](Model::TransformError&& e) {
-                        error() << "Could not transform objects: " << e;
-                    });
+                ));
             }
 
             invalidateSelectionBounds();

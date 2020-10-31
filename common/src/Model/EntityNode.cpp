@@ -162,6 +162,21 @@ namespace TrenchBroom {
             cacheAttributes();
         }
 
+        void EntityNode::transform(const vm::mat4x4& transformation) {
+            // node change is called by setOrigin already
+            const auto center = logicalBounds().center();
+            const auto offset = center - origin();
+            const auto transformedCenter = transformation * center;
+            setOrigin(transformedCenter - offset);
+
+            // applying rotation has side effects (e.g. normalizing "angles")
+            // so only do it if there is actually some rotation.
+            const auto rotation = vm::strip_translation(transformation);
+            if (rotation != vm::mat4x4::identity()) {
+                applyRotation(rotation);
+            }
+        }
+
         const vm::bbox3& EntityNode::doGetLogicalBounds() const {
             if (!m_boundsValid) {
                 validateBounds();
@@ -335,23 +350,6 @@ namespace TrenchBroom {
 
         GroupNode* EntityNode::doGetGroup() {
             return findContainingGroup(this);
-        }
-
-        kdl::result<void, TransformError> EntityNode::doTransform(const vm::bbox3&, const vm::mat4x4& transformation, bool) {
-            // node change is called by setOrigin already
-            const auto center = logicalBounds().center();
-            const auto offset = center - origin();
-            const auto transformedCenter = transformation * center;
-            setOrigin(transformedCenter - offset);
-
-            // applying rotation has side effects (e.g. normalizing "angles")
-            // so only do it if there is actually some rotation.
-            const auto rotation = vm::strip_translation(transformation);
-            if (rotation != vm::mat4x4::identity()) {
-                applyRotation(rotation);
-            }
-
-            return kdl::result<void, TransformError>::success();
         }
 
         bool EntityNode::doContains(const Node* node) const {

@@ -935,8 +935,13 @@ namespace TrenchBroom {
             Model::BrushNode* brush2 = document->world()->createBrush(builder.createCube(64.0, "none").value());
             Model::BrushNode* brush3 = document->world()->createBrush(builder.createCube(64.0, "none").value());
 
-            REQUIRE(brush2->transform(document->worldBounds(), vm::translation_matrix(vm::vec3(10.0, 0.0, 0.0)), false));
-            REQUIRE(brush3->transform(document->worldBounds(), vm::translation_matrix(vm::vec3(100.0, 0.0, 0.0)), false));
+            auto brush2_brush = brush2->brush();
+            REQUIRE(brush2_brush.transform(document->worldBounds(), vm::translation_matrix(vm::vec3(10.0, 0.0, 0.0)), false));
+            brush2->setBrush(std::move(brush2_brush));
+
+            auto brush3_brush = brush3->brush();
+            REQUIRE(brush3_brush.transform(document->worldBounds(), vm::translation_matrix(vm::vec3(100.0, 0.0, 0.0)), false));
+            brush3->setBrush(std::move(brush2_brush));
 
             document->addNode(brush1, document->parentForNodes());
             document->addNode(brush2, document->parentForNodes());

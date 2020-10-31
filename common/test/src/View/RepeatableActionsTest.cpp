@@ -73,7 +73,7 @@ namespace TrenchBroom {
 
         TEST_CASE_METHOD(RepeatableActionsTest, "RepeatableActionsTest.repeatRotate") {
             auto* entityNode = new Model::EntityNode();
-            REQUIRE(entityNode->transform(document->worldBounds(), vm::translation_matrix(vm::vec3(1, 2, 3)), false).is_success());
+            entityNode->transform(vm::translation_matrix(vm::vec3(1, 2, 3)));
 
             document->addNode(entityNode, document->parentForNodes());
             document->select(entityNode);
