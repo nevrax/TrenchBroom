@@ -337,37 +337,18 @@ namespace TrenchBroom {
             return findContainingGroup(this);
         }
 
-        kdl::result<void, TransformError> EntityNode::doTransform(const vm::bbox3& worldBounds, const vm::mat4x4& transformation, bool lockTextures) {
-            if (hasChildren()) {
-                const NotifyNodeChange nodeChange(this);
+        kdl::result<void, TransformError> EntityNode::doTransform(const vm::bbox3&, const vm::mat4x4& transformation, bool) {
+            // node change is called by setOrigin already
+            const auto center = logicalBounds().center();
+            const auto offset = center - origin();
+            const auto transformedCenter = transformation * center;
+            setOrigin(transformedCenter - offset);
 
-                for (auto* child : children()) {
-                    const auto result = child->accept(kdl::overload(
-                        [] (WorldNode*)  { return kdl::result<void, TransformError>::success(); },
-                        [] (LayerNode*)  { return kdl::result<void, TransformError>::success(); },
-                        [] (GroupNode*)  { return kdl::result<void, TransformError>::success(); },
-                        [] (EntityNode*) { return kdl::result<void, TransformError>::success(); },
-                        [&](BrushNode* brush) {
-                            return brush->transform(worldBounds, transformation, lockTextures);
-                        }
-                    ));
-                    if (!result.is_success()) {
-                        return result;
-                    }
-                }
-            } else {
-                // node change is called by setOrigin already
-                const auto center = logicalBounds().center();
-                const auto offset = center - origin();
-                const auto transformedCenter = transformation * center;
-                setOrigin(transformedCenter - offset);
-
-                // applying rotation has side effects (e.g. normalizing "angles")
-                // so only do it if there is actually some rotation.
-                const auto rotation = vm::strip_translation(transformation);
-                if (rotation != vm::mat4x4::identity()) {
-                    applyRotation(rotation);
-                }
+            // applying rotation has side effects (e.g. normalizing "angles")
+            // so only do it if there is actually some rotation.
+            const auto rotation = vm::strip_translation(transformation);
+            if (rotation != vm::mat4x4::identity()) {
+                applyRotation(rotation);
             }
 
             return kdl::result<void, TransformError>::success();
