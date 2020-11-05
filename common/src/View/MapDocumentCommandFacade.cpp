@@ -416,62 +416,6 @@ namespace TrenchBroom {
             groupWasClosedNotifier(previousGroup);
         }
 
-        bool MapDocumentCommandFacade::performTransform(const vm::mat4x4 &transform, const bool lockTextures) {
-            const std::vector<Model::Node*>& nodes = m_selectedNodes.nodes();
-            const std::vector<Model::Node*> parents = collectParents(nodes);
-
-            Notifier<const std::vector<Model::Node*> &>::NotifyBeforeAndAfter notifyParents(nodesWillChangeNotifier, nodesDidChangeNotifier, parents);
-            Notifier<const std::vector<Model::Node*> &>::NotifyBeforeAndAfter notifyNodes(nodesWillChangeNotifier, nodesDidChangeNotifier, nodes);
-
-            bool success = true;
-            for (auto nodeIt = std::begin(nodes); nodeIt != std::end(nodes) && success; ++nodeIt) {
-                success = (*nodeIt)->accept(kdl::overload(
-                    [](Model::WorldNode*) {
-                        return true;
-                    },
-                    [](Model::LayerNode*) {
-                        return true;
-                    },
-                    [&](auto&& thisLambda, Model::GroupNode* group) {
-                        for (auto* child : group->children()) {
-                            if (!child->accept(thisLambda)) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    },
-                    [&](auto&& thisLambda, Model::EntityNode* entity) {
-                        if (entity->hasChildren()) {
-                            for (auto* child : entity->children()) {
-                                if (!child->accept(thisLambda)) {
-                                    return false;
-                                }
-                            }
-                        } else {
-                            entity->transform(transform);
-                        }
-                        return true;
-                    },
-                    [&](Model::BrushNode* brush) {
-                        return brush->brush().transform(m_worldBounds, transform, lockTextures)
-                            .visit(kdl::overload(
-                                [&](Model::Brush&& b) {
-                                    brush->setBrush(std::move(b));
-                                    return true;
-                                },
-                                [&](const Model::BrushError e) {
-                                    error() << "Could not transform objects: " << e;
-                                    return false;
-                                }
-                            ));                 
-                    }
-                ));
-            }
-
-            invalidateSelectionBounds();
-            return success;
-        }
-
         MapDocumentCommandFacade::EntityAttributeSnapshotMap MapDocumentCommandFacade::performSetAttribute(const std::string& name, const std::string& value) {
             const std::vector<Model::AttributableNode*> attributableNodes = allSelectedAttributableNodes();
             return performSetAttributeForNodes(attributableNodes, name, value);
